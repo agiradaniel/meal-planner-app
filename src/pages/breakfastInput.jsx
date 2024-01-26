@@ -58,8 +58,8 @@ const BreakfastInput = () => {
     const lastMealTime = time
     const id = "xqDYgrVSTBbaGffmIQOQ"
     
-    const supperDoc = doc(db, "meals", "rRvWdcT1JTTaHabbKCL6", "lastMeal", id);
-    await updateDoc(supperDoc, {lastMealTime});
+    const breakfastDoc = doc(db, "meals", "rRvWdcT1JTTaHabbKCL6", "lastMeal", id);
+    await updateDoc(breakfastDoc, {lastMealTime});
    
  
   }
@@ -118,7 +118,7 @@ const BreakfastInput = () => {
         <Button onClick={submitBreakfast} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>
         </div>
 
-        <div style={{marginBottom:"100px"}}>
+        <div style={{marginBottom:"200px"}}>
         {allMeals.map((meals)=>{
           
           const containerColor = calculateContainerColor(meals.breakfastSize);

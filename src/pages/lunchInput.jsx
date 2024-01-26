@@ -119,7 +119,7 @@ const LunchInput = () => {
         </div>
 
 
-        <div style={{marginBottom:"100px"}}>
+        <div style={{marginBottom:"200px"}}>
         {allMeals.map((meals)=>{
           
           const containerColor = calculateContainerColor(meals.lunchSize);

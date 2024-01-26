@@ -180,7 +180,7 @@ const Home = () => {
             <Link to="/lunchinput"><img src={AddIcon}/></Link>
         </div>
 
-        <div style={{backgroundColor:"#D3EEDF", width:"90%", borderRadius:"20px", display:"flex", justifyContent:"space-between", padding:"20px", margin:"30px auto 100px"}}>
+        <div style={{backgroundColor:"#D3EEDF", width:"90%", borderRadius:"20px", display:"flex", justifyContent:"space-between", padding:"20px", margin:"30px auto 200px"}}>
             <div style={{display:"flex", alignItems: "center"}}>
                 <img src={SupperIcon} style={{ marginRight: "10px" }}/>
                 <div>Supper</div>
