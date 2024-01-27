@@ -3,14 +3,15 @@ import NavBar from '../components/navBar'
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/esm/Button';
 import {db} from '../firebase-config';
-import {addDoc, collection, getDocs, orderBy, query, doc, updateDoc} from 'firebase/firestore'
+import {addDoc, collection, getDocs, orderBy, query, doc, updateDoc, where} from 'firebase/firestore'
 
 const BreakfastInput = () => {
 
   const [breakfastSize, setBreakfastSize] = useState("small");
   const [breakfastDescription, setBreakfastDescription] = useState("");
   const [allMeals, setAllMeals] = useState([]);
-  const [breakfastScore, setBreakfastScore] = useState(1)
+  const [breakfastScore, setBreakfastScore] = useState(1);
+  const [todaysMealExists, setTodaysMealExists] = useState(false)
 
   const date = new Date().toLocaleString('en-KE', { timeZone: 'Africa/Nairobi' }).split(' ')[0].replace(',', '');
   const time = new Date().toLocaleTimeString('en-KE', { timeZone: 'Africa/Nairobi' }).slice(0, 5);   
@@ -30,6 +31,14 @@ const BreakfastInput = () => {
       ...doc.data(), id: doc.id
     })))
 
+  }
+
+  const checkIfTodaysMealExists = async() => {
+    const q = await query(mealsCollection, 
+      where('date', "==", date)
+    )
+    const data = await getDocs(q)
+    !data.empty ? setTodaysMealExists(true): setTodaysMealExists(false)
   }
 
   useEffect(()=>{
@@ -52,6 +61,7 @@ const BreakfastInput = () => {
 
    useEffect(()=>{
      getMeals()
+     checkIfTodaysMealExists()
    },[])
 
    const submitLastMeal = async () => {
@@ -115,7 +125,7 @@ const BreakfastInput = () => {
           </Dropdown.Menu>
         </Dropdown>
         <textarea placeholder='Breakfast Description' rows={4} onChange={(e)=>setBreakfastDescription(e.target.value)} style={{border:"none", margin:"20px auto 0", borderRadius:"10px", width:"90%"}}/>
-        <Button onClick={submitBreakfast} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>
+         {todaysMealExists ? <Button style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}} disabled>saved</Button> : <Button onClick={submitBreakfast} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>}
         </div>
 
         <div style={{marginBottom:"200px"}}>

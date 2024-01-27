@@ -3,7 +3,7 @@ import NavBar from '../components/navBar'
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/esm/Button';
 import {db} from '../firebase-config';
-import {addDoc, collection, getDocs, orderBy, query, updateDoc, doc} from 'firebase/firestore';
+import {addDoc, collection, getDocs, orderBy, query, updateDoc, doc, where} from 'firebase/firestore';
 
 const SupperInput = () => {
  
@@ -11,12 +11,44 @@ const SupperInput = () => {
   const [supperDescription, setSupperDescription] = useState("");
   const [allMeals, setAllMeals] = useState([]);
   const [supperScore, setSupperScore] = useState(1);
+  const [todaysMealExists, setTodaysMealExists] = useState(false);
+  const [breakfastData, setBreakfastData] = useState([]);
+  const [lunchData, setLunchData] = useState([]);
+  const [supperData, setSupperData] = useState([]);
 
   const date = new Date().toLocaleString('en-KE', { timeZone: 'Africa/Nairobi' }).split(' ')[0].replace(',', '');
   const time = new Date().toLocaleTimeString('en-KE', { timeZone: 'Africa/Nairobi' }).slice(0, 5);   
   
   const mealsCollection = collection(db, "meals", "rRvWdcT1JTTaHabbKCL6", "supper")
+  const breakfastCollection = collection(db, "meals", "rRvWdcT1JTTaHabbKCL6", "breakfast")
+  const lunchCollection = collection(db, "meals", "rRvWdcT1JTTaHabbKCL6", "lunch")
+  const reportCollection = collection(db, "meals", "rRvWdcT1JTTaHabbKCL6", "report")
 
+  //this code gets data from different collections in order to create a report
+  const getMergedMealSizes = async () => {
+    const b = await query(breakfastCollection,
+      where('date', "==", date)
+    )
+    const bdata = await getDocs(b)
+
+    //set users to show all the data in the collection
+    setBreakfastData(bdata.docs.map((doc)=>({
+      ...doc.data(), id: doc.id
+    })))
+
+    const l = await query(lunchCollection,
+      where('date', "==", date)
+    )
+    const ldata = await getDocs(l)
+
+    //set users to show all the data in the collection
+    setLunchData(ldata.docs.map((doc)=>({
+      ...doc.data(), id: doc.id
+    })))
+
+  }
+  
+  
   //showing the data on the database collection on your page
   const getMeals = async () => {
     const q = await query(mealsCollection,
@@ -29,6 +61,14 @@ const SupperInput = () => {
       ...doc.data(), id: doc.id
     })))
 
+  }
+
+  const checkIfTodaysMealExists = async() => {
+    const q = await query(mealsCollection, 
+      where('date', "==", date)
+    )
+    const data = await getDocs(q)
+    !data.empty ? setTodaysMealExists(true): setTodaysMealExists(false)
   }
 
   useEffect(()=>{
@@ -50,7 +90,9 @@ const SupperInput = () => {
    },[supperSize])
 
    useEffect(()=>{
+    getMergedMealSizes()
      getMeals()
+     checkIfTodaysMealExists()
    },[])
 
    const submitLastMeal = async () => {
@@ -61,6 +103,30 @@ const SupperInput = () => {
     await updateDoc(supperDoc, {lastMealTime});
    
  
+  }
+
+  const retrievedBreakfastSize = breakfastData.length > 0 ? breakfastData[0].breakfastSize : '';
+  const retrievedLunchSize = lunchData.length > 0 ? lunchData[0].lunchSize : '';
+  //const retrievedSupperSize = supperData.length > 0 ? supperData[0].supperSize : '';
+  const retrievedBreakfastScore = breakfastData.length > 0 ? breakfastData[0].breakfastScore : '';
+  const retrievedLunchScore = lunchData.length > 0 ? lunchData[0].lunchScore : '';
+  //const retrievedSupperScore = supperData.length > 0 ? supperData[0].supperScore : '';
+
+  const storeReportData = async() => {
+    
+    const totalScore = retrievedBreakfastScore + retrievedLunchScore + supperScore;
+
+    await addDoc(reportCollection, {
+      date: date,
+      breakfastSize: retrievedBreakfastSize, 
+      lunchSize: retrievedLunchSize,
+      supperSize: supperSize,
+      breakfastScore: retrievedBreakfastScore,
+      lunchScore: retrievedLunchScore,
+      supperScore: supperScore,
+      totalScore
+    })
+    console.log("Data inserted successfully")
   }
   
   const submitSupper = async() => {
@@ -74,6 +140,7 @@ const SupperInput = () => {
     console.log("Data inserted successfully")
     getMeals()
     submitLastMeal()
+    storeReportData()
   }
 
   // Function to calculate color based on meal size
@@ -110,7 +177,7 @@ const SupperInput = () => {
           </Dropdown.Menu>
         </Dropdown>
         <textarea placeholder='Supper Description' onChange={(e)=>setSupperDescription(e.target.value)} rows={4} style={{border:"none", margin:"20px auto 0", borderRadius:"10px", width:"90%"}}/>
-        <Button onClick={submitSupper} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>
+        {todaysMealExists ? <Button style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}} disabled>saved</Button> : <Button onClick={submitSupper} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>}
         </div>
 
         <div style={{marginBottom:"200px"}}>

@@ -11,6 +11,7 @@ const Reports = () => {
   const [lunchData, setLunchData] = useState([]);
   const [supperData, setSupperData] = useState([]);
   const [summaryReports, setSummaryReports] = useState([]);
+  const [todaysReportExists, setTodaysReportExists] = useState(false)
 
   const todaysDate = new Date().toLocaleString('en-KE', { timeZone: 'Africa/Nairobi' }).split(' ')[0].replace(',', '');
   const todaysTime = new Date().toLocaleTimeString('en-KE', { timeZone: 'Africa/Nairobi' }).slice(0, 5); 
@@ -90,9 +91,23 @@ const Reports = () => {
     })))
   }
 
+  const checkIfTodaysReportExists = async() => {
+    const q = await query(reportCollection, 
+      where('date', "==", todaysDate)
+    )
+    const data = await getDocs(q)
+    //!data.empty ? setTodaysReportExists(true) : setTodaysReportExists(false)
+    if(!data.length > 0 && breakfastData.length > 0 && lunchData.length > 0 && supperData.length > 0){
+      setTodaysReportExists(false)
+    }else{
+      setTodaysReportExists(true)
+    }
+  }
+
   useEffect(()=>{
     getMergedMealSizes()
     getReports()
+    checkIfTodaysReportExists()
   },[])
 
   const calculateContainerColor = (size) => {
@@ -166,7 +181,7 @@ const Reports = () => {
       
       <br/>
       <div style={{margin:"auto", textAlign:"center",}}>
-        <button style={{backgroundColor:"#51AF61", border:"none", padding:"10px 10px", borderRadius:"10px", color:"white"}} onClick={storeReportData}>Regenerate</button>
+        {todaysReportExists ? <Button style={{backgroundColor:"#51AF61", border:"none", padding:"10px 10px", borderRadius:"10px", color:"white"}} disabled> Regenerated </Button> : <Button style={{backgroundColor:"#51AF61", border:"none", padding:"10px 10px", borderRadius:"10px", color:"white"}} onClick={storeReportData}>Regenerate</Button>}
       </div>
 
         <NavBar/>

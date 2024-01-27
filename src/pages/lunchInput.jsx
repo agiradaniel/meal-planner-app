@@ -3,7 +3,7 @@ import NavBar from '../components/navBar';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/esm/Button';
 import {db} from '../firebase-config';
-import {addDoc, collection, getDocs, orderBy, query, updateDoc, doc} from 'firebase/firestore';
+import {addDoc, collection, getDocs, orderBy, query, updateDoc, doc, where} from 'firebase/firestore';
 
 
 const LunchInput = () => {
@@ -12,6 +12,7 @@ const LunchInput = () => {
   const [lunchDescription, setLunchDescription] = useState("");
   const [allMeals, setAllMeals] = useState([]);
   const [lunchScore, setLunchScore] = useState(1);
+  const [todaysMealExists, setTodaysMealExists] = useState(false);
 
   const date = new Date().toLocaleString('en-KE', { timeZone: 'Africa/Nairobi' }).split(' ')[0].replace(',', '');
   const time = new Date().toLocaleTimeString('en-KE', { timeZone: 'Africa/Nairobi' }).slice(0, 5);   
@@ -35,8 +36,17 @@ const LunchInput = () => {
 
   }
 
+  const checkIfTodaysMealExists = async() => {
+    const q = await query(mealsCollection, 
+      where('date', "==", date)
+    )
+    const data = await getDocs(q)
+    !data.empty ? setTodaysMealExists(true): setTodaysMealExists(false)
+  }
+
    useEffect(()=>{
      getMeals()
+     checkIfTodaysMealExists()
    },[])
 
    useEffect(()=>{
@@ -115,7 +125,7 @@ const LunchInput = () => {
           </Dropdown.Menu>
         </Dropdown>
         <textarea placeholder='Lunch Description' onChange={(e)=>setLunchDescription(e.target.value)} rows={4} style={{border:"none", margin:"20px auto 0", borderRadius:"10px", width:"90%"}}/>
-        <Button onClick={submitLunch} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>
+        {todaysMealExists ? <Button style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}} disabled>saved</Button> : <Button onClick={submitLunch} style={{backgroundColor:"#51AF61", border:"none", marginTop:"20px", padding:"5px 30px"}}>save</Button>}
         </div>
 
 
