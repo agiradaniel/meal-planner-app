@@ -3,7 +3,7 @@ import NavBar from '../components/navBar'
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/esm/Button';
 import {db} from '../firebase-config';
-import { addDoc, collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
 
 const Reports = () => {
   const [allMeals, setAllMeals] = useState([]);
@@ -81,7 +81,8 @@ const Reports = () => {
 
   const getReports = async() => {
     const q = await query(reportCollection,
-      orderBy('date', 'desc')
+      orderBy('date', 'desc'),
+      limit(30)
     )
     const data = await getDocs(q)
 
@@ -134,7 +135,7 @@ const Reports = () => {
 
 
   return (
-    <>
+    <div style={{maxWidth:"450px", margin:"auto"}}>
         <div style={{backgroundColor:"#D3EEDF", width:"90%", borderRadius:"20px", textAlign:"center", padding:"20px", margin:"30px auto 0", display:"flex", justifyContent:"space-between"}}>
             
             <div>Reports</div>
@@ -185,7 +186,7 @@ const Reports = () => {
       </div>
 
         <NavBar/>
-    </>
+    </div>
   )
 }
 

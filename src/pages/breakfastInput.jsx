@@ -3,7 +3,7 @@ import NavBar from '../components/navBar'
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/esm/Button';
 import {db} from '../firebase-config';
-import {addDoc, collection, getDocs, orderBy, query, doc, updateDoc, where} from 'firebase/firestore'
+import {addDoc, collection, getDocs, orderBy, query, doc, updateDoc, where, limit} from 'firebase/firestore'
 
 const BreakfastInput = () => {
 
@@ -22,7 +22,8 @@ const BreakfastInput = () => {
   //showing the data on the database collection on your page
   const getMeals = async () => {
     const q = await query(mealsCollection,
-      orderBy('date', 'desc')
+      orderBy('date', 'desc'),
+      limit(7)
     )
     const data = await getDocs(q)
 
@@ -99,7 +100,7 @@ const BreakfastInput = () => {
   };
 
   return (
-    <>
+    <div style={{maxWidth:"450px", margin:"auto"}}>
         <div style={{backgroundColor:"#D3EEDF", width:"90%", borderRadius:"20px", textAlign:"center", padding:"20px", margin:"30px auto 0"}}>
             
             <div><h4>Breakfast</h4></div>
@@ -149,7 +150,7 @@ const BreakfastInput = () => {
         </div>
 
         <NavBar/>
-    </>
+    </div>
   )
 }
 

@@ -127,7 +127,7 @@ const Home = () => {
       
   
     return (
-    <>
+    <div style={{maxWidth:"450px", margin:"auto"}}>
         <div style={{backgroundColor:"#D3EEDF", width:"90%", borderRadius:"20px", display:"flex", justifyContent:"space-between", padding:"20px", margin:"30px auto 0"}}>
             
             <div>Daniel's Meal Plan</div>
@@ -190,7 +190,7 @@ const Home = () => {
 
         <NavBar/>
 
-    </>
+    </div>
   )
 }
 
