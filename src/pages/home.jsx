@@ -136,7 +136,7 @@ const Home = () => {
           
         <div  style={{boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" ,width:"90%", borderRadius:"20px", padding:"20px", margin:"30px auto 0"}}>
             <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-                {timeDifference < 240 ? <div style={{backgroundColor:"#DC4523", padding:"20px 20px", color:"white", borderRadius:"10px", display: "flex", alignItems: "center"}}>Last Meal: {recordedTime}<br/>You can't eat</div>:
+                {timeDifference < 240 && timeDifference >= 0 ? <div style={{backgroundColor:"#DC4523", padding:"20px 20px", color:"white", borderRadius:"10px", display: "flex", alignItems: "center"}}>Last Meal: {recordedTime}<br/>You can't eat</div>:
                 
                 <div style={{backgroundColor:"#51AF61", padding:"20px 20px", color:"white", borderRadius:"10px", display: "flex", alignItems: "center"}}>Last Meal: {recordedTime}<br/>Free to eat</div>}
                 
