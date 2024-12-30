@@ -11,7 +11,7 @@ const NavBar = () => {
             
             <Link to="/"><img src={CutleryIcon} style={{height:"45px", width:"45px"}}/></Link>
             <Link to="/reports"><img src={ReportIcon} style={{height:"40px", width:"40px"}}/></Link>
-            <img src={ProfileIcon} style={{height:"40px", width:"40px"}}/>
+            <Link to="/tool"><img src={ProfileIcon} style={{height:"40px", width:"40px"}}/></Link>
 
         </div>
     </>
